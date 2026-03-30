@@ -5,3 +5,11 @@ __pycache__/
 venv/
 .idea/
 .vscode/
+
+# Ignore all JSON output/result files, but keep the test cases source
+*.json
+!tests/test_cases.json
+
+# Project-internal AI assistant config
+CLAUDE.md
+memory/
