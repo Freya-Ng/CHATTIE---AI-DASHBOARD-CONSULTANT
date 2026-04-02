@@ -29,7 +29,7 @@ SUPPORTED_PROVIDERS = {
         "display_name": "OpenAI GPT",
         "model": "gpt-4o-mini",
         "max_output_tokens": 4096,
-        "temperature": 0.7,
+        "temperature": 0.5,
     },
 }
 
