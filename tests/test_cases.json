@@ -105,28 +105,32 @@
   {
     "id": "TC-A-005",
     "name": "Happy Path — Y tế, phân tích thử nghiệm lâm sàng",
-    "group": "Happy Path",
+    "group": "A",
+    "group_name": "Happy Path",
     "priority": "Medium",
     "preconditions": "New conversation",
+    "domain": "Y tế / Nghiên cứu lâm sàng",
     "steps": [
-      "Turn 1: User gửi tin nhắn đầy đủ thông tin phân tích y tế, 7 cột, 4 chart.",
-      "Turn 2: Bot trả về gợi ý 4 chart theo format chuẩn.",
-      "Turn 3: User hỏi 'Chart nào trong 4 cái này phù hợp nhất để trình bày trong báo cáo nghiên cứu?'"
+      "Turn 1: User gửi đầy đủ 4 thông tin (mục tiêu 4 chart, 7 cột y tế, đối tượng Nghiên cứu sinh, tool Excel).",
+      "→ Bot PHẢI gợi ý 4 chart ngay vì đủ info.",
+      "Turn 2: User hỏi follow-up: chart nào phù hợp nhất cho báo cáo nghiên cứu?"
     ],
-    "specific_input": "Turn 1: 'Tôi muốn 4 biểu đồ phân tích kết quả thử nghiệm lâm sàng. Data gồm 7 cột: patient_id (int — mã bệnh nhân), age_group (string — nhóm tuổi: 18-30, 31-45, 46-60, 60+), treatment_group (string — nhóm điều trị: Placebo, Drug_A, Drug_B), dosage (float — liều lượng mg), recovery_days (int — số ngày hồi phục), side_effect_count (int — số tác dụng phụ), outcome (string — kết quả: Recovered, Ongoing, Dropped). Người xem: Nghiên cứu sinh. Công cụ: Excel.' | Turn 3: 'Chart nào trong 4 cái này phù hợp nhất để trình bày trong báo cáo nghiên cứu? Có cần thay đổi gì không?'",
-    "expected_output": "Turn 2: Bot gợi ý 4 chart format chuẩn 'Tổng tôi gợi ý 4 chart...' phù hợp phân tích lâm sàng. Hỏi xác nhận. Turn 3→4: Bot gợi ý chart nào phù hợp báo cáo nghiên cứu (VD: Box plot so sánh treatment groups, Grouped Bar), giải thích lý do.",
+    "specific_input": "Turn 1: 'Tôi muốn 4 biểu đồ phân tích kết quả thử nghiệm lâm sàng. Data gồm 7 cột: patient_id (int — mã bệnh nhân), age_group (string — nhóm tuổi: 18-30, 31-45, 46-60, 60+), treatment_group (string — nhóm điều trị: Placebo, Drug_A, Drug_B), dosage (float — liều lượng mg), recovery_days (int — số ngày hồi phục), side_effect_count (int — số tác dụng phụ), outcome (string — kết quả: Recovered, Ongoing, Dropped). Người xem: Nghiên cứu sinh. Công cụ: Excel.' | Turn 2: 'Chart nào trong 4 cái này phù hợp nhất để trình bày trong báo cáo nghiên cứu? Có cần thay đổi gì không?'",
+    "expected_output": "Turn 1→Bot: Gợi ý 4 chart format chuẩn 'Tổng tôi gợi ý 4 chart...' phù hợp phân tích lâm sàng. Có feature engineering (VD: recovery_rate = COUNT(Recovered)/COUNT(*), avg_side_effects theo treatment_group). Chart type phù hợp Excel. Kết thúc câu mời phản hồi. Turn 2→Bot: Gợi ý 1-2 chart phù hợp nhất cho báo cáo nghiên cứu, giải thích lý do phù hợp academic context.",
     "pass_fail_criteria": [
-      "Có đúng 4 chart",
-      "Chart phù hợp ngữ cảnh y tế/nghiên cứu",
-      "Dạng chart khả thi trong Excel",
-      "Mỗi chart đủ 3 thành phần: Tên, Công thức, Dạng chart",
-      "Không sinh code Python/R/SQL",
-      "Có câu hỏi xác nhận cuối Turn 2",
-      "Format output đúng chuẩn: 'Tổng tôi gợi ý X chart...'"
+      "Turn 1: Bot gợi ý chart NGAY (không hỏi thêm vì đủ 4 info)",
+      "Turn 1: Có đúng 4 chart",
+      "Turn 1: Chart phù hợp ngữ cảnh y tế/nghiên cứu (so sánh treatment groups, phân phối recovery, outcome breakdown)",
+      "Turn 1: Có feature engineering (VD: recovery_rate, avg_side_effects theo nhóm)",
+      "Turn 1: Dạng chart khả thi trong Excel (không dùng Sankey, Waterfall...)",
+      "Turn 1: Mỗi chart đủ 4 thành phần: Mục đích, Công thức, Dạng chart, Trục",
+      "Turn 1: Format output đúng chuẩn: Tổng quan + Chart 1-4 + Lời kết",
+      "Both: Không sinh code Python/R/SQL",
+      "Turn 2: Bot gợi ý cụ thể chart nào phù hợp báo cáo nghiên cứu, có lý do (KHÔNG cần output chart mới — chỉ cần tư vấn chọn chart)"
     ],
     "actual_output": "",
     "status": "Untested",
-    "notes": "Test domain chuyên biệt (y tế). Turn 3 kiểm tra bot tư vấn phù hợp context academic."
+    "notes": "Test domain chuyên biệt (y tế). Turn 1 đã đủ 4 info → bot PHẢI output chart ngay. Turn 2 là câu hỏi META (chọn chart nào) — KHÔNG kỳ vọng bot output chart mới, chỉ cần tư vấn lựa chọn."
   },
   {
     "id": "TC-B-001",
@@ -393,28 +397,30 @@
   {
     "id": "TC-D-001",
     "name": "Over Capacity — 10 chart từ 3 cột",
-    "group": "Over Capacity",
+    "group": "D",
+    "group_name": "Over Capacity",
     "priority": "High",
     "preconditions": "New conversation",
+    "domain": "General",
     "steps": [
-      "Turn 1: User yêu cầu 10 chart nhưng data chỉ có 3 cột.",
-      "Turn 2: Bot giải thích giới hạn, đề xuất số chart hợp lý.",
-      "Turn 3: User đồng ý giảm xuống số chart bot đề xuất."
+      "Turn 1: User yêu cầu 10 chart từ 3 cột. Đã đủ 4 info.",
+      "→ Bot PHẢI giải thích giới hạn (3 cột = max 3-5 chart) VÀ gợi ý chart ngay.",
+      "Turn 2: User đồng ý: 'gợi ý số chart hợp lý nhất đi'",
+      "→ Bot output chart phù hợp (KHÔNG cần lặp lại giải thích giới hạn)."
     ],
-    "specific_input": "Turn 1: 'Tôi muốn 10 biểu đồ khác nhau. Data chỉ có 3 cột: date (datetime — ngày), amount (float — số tiền), category (string — danh mục). Người xem: Trưởng phòng. Tool: Power BI.' | Turn 3: 'OK, vậy gợi ý cho tôi số chart hợp lý nhất đi.'",
-    "expected_output": "Turn 2: Bot giải thích 3 cột chỉ tạo tối đa 4-5 chart có ý nghĩa, 10 chart sẽ trùng lặp. Đề xuất 3-5 chart. Turn 3→4: Bot gợi ý chart format chuẩn với số lượng hợp lý.",
+    "specific_input": "Turn 1: 'Tôi muốn 10 biểu đồ khác nhau. Data chỉ có 3 cột: date (datetime — ngày), amount (float — số tiền), category (string — danh mục). Người xem: Trưởng phòng. Tool: Power BI.' | Turn 2: 'OK, vậy gợi ý cho tôi số chart hợp lý nhất đi.'",
+    "expected_output": "Turn 1→Bot: Giải thích 3 cột chỉ tạo max 3-5 chart có ý nghĩa. Gợi ý chart ngay (hoặc hỏi user chọn số). Turn 2→Bot: Output chart format chuẩn với số lượng hợp lý.",
     "pass_fail_criteria": [
-      "Bot từ chối tạo 10 chart",
-      "Bot giải thích lý do: quá ít cột cho 10 chart",
-      "Bot đề xuất số chart hợp lý (3-5)",
-      "Giọng điệu tư vấn, không phán xét user",
-      "Sau khi user đồng ý, output đúng format",
-      "Không sinh code Python/R/SQL",
-      "Khi bot gợi ý chart thành công, phải kết thúc bằng câu hỏi mở cho chỉnh sửa (VD: 'Bạn có muốn chỉnh sửa gì không?')"
+      "Turn 1: Bot giải thích lý do không thể 10 chart từ 3 cột",
+      "Turn 1: Bot đề xuất số chart hợp lý (3-5)",
+      "Turn 1: Giọng điệu tư vấn, không phán xét user",
+      "Both: Không sinh code Python/R/SQL",
+      "Turn 2: Bot output chart format chuẩn (KHÔNG cần lặp lại giải thích giới hạn — chỉ cần chart output)",
+      "Turn 2: Kết thúc bằng câu mời phản hồi"
     ],
     "actual_output": "",
     "status": "Untested",
-    "notes": "Test giới hạn logic: số chart phải tỷ lệ với số cột."
+    "notes": "Turn 1 test giải thích giới hạn. Turn 2 test chart output — bot KHÔNG cần lặp lại keywords 'tối đa/giới hạn' ở turn này, chỉ cần output chart hợp lý."
   },
   {
     "id": "TC-D-002",
@@ -445,53 +451,60 @@
   {
     "id": "TC-D-003",
     "name": "Over Capacity — 15 chart vượt giới hạn hệ thống",
-    "group": "Over Capacity",
+    "group": "D",
+    "group_name": "Over Capacity",
     "priority": "High",
     "preconditions": "New conversation",
+    "domain": "Kinh doanh tổng hợp",
     "steps": [
-      "Turn 1: User yêu cầu 15 chart, data đủ 8 cột.",
-      "Turn 2: Bot thông báo giới hạn tối đa 6, gợi ý 6 chart quan trọng nhất.",
-      "Turn 3: User hỏi 'Nếu muốn thêm chart nữa thì sao?'"
+      "Turn 1: User yêu cầu 15 chart với 8 cột đầy đủ info (đối tượng CEO, tool Power BI).",
+      "→ Bot PHẢI thông báo giới hạn 6 chart VÀ gợi ý 6 chart ngay trong cùng turn.",
+      "Turn 2: User hỏi 'Nếu muốn thêm chart nữa ngoài 6 thì phải làm sao?'",
+      "→ Bot nên gợi ý giải pháp thực tế (KHÔNG cần output chart ở turn này)."
     ],
-    "specific_input": "Turn 1: 'Tôi muốn 15 biểu đồ phân tích toàn diện. Data gồm 8 cột: order_id (int), date (datetime), product (string), category (string), revenue (float), quantity (int), region (string), customer_type (string). Người xem: CEO. Tool: Power BI.' | Turn 3: 'Nếu tôi cần thêm chart nữa ngoài 6 cái đó thì phải làm sao?'",
-    "expected_output": "Turn 2: Bot nêu giới hạn 6 chart, gợi ý 6 chart quan trọng nhất cho CEO, format chuẩn. Turn 3→4: Bot gợi ý giải pháp: chia thành 2-3 dashboard riêng biệt theo chủ đề.",
+    "specific_input": "Turn 1: 'Tôi muốn 15 biểu đồ phân tích toàn diện. Data gồm 8 cột: order_id (int — mã đơn), date (datetime — ngày đặt), product (string — tên sản phẩm), category (string — danh mục), revenue (float — doanh thu), quantity (int — số lượng), region (string — khu vực), customer_type (string — loại KH: Mới/Cũ). Người xem: CEO. Tool: Power BI.' | Turn 2: 'Nếu tôi cần thêm chart nữa ngoài 6 cái đó thì phải làm sao?'",
+    "expected_output": "Turn 1→Bot: Thông báo giới hạn 6 chart + gợi ý ngay 6 chart quan trọng nhất cho CEO. Format chuẩn. Turn 2→Bot: Gợi ý giải pháp thực tế — tư vấn thêm lượt, chia theo chủ đề, v.v. (KHÔNG cần output chart ở turn này).",
     "pass_fail_criteria": [
-      "Bot nêu rõ giới hạn tối đa 6 chart",
-      "Bot gợi ý đúng 6 chart (không hơn)",
-      "Chart phù hợp CEO (high-level, tổng quan)",
-      "Giải thích logic chọn chart",
-      "Gợi ý giải pháp chia dashboard khi user hỏi thêm",
-      "Không sinh code Python/R/SQL",
-      "Khi bot gợi ý chart thành công, phải kết thúc bằng câu hỏi mở cho chỉnh sửa (VD: 'Bạn có muốn chỉnh sửa gì không?')"
+      "Turn 1: Bot nêu rõ giới hạn tối đa 6 chart",
+      "Turn 1: Bot gợi ý đúng 6 chart NGAY trong cùng turn (không hỏi thêm)",
+      "Turn 1: Chart phù hợp CEO (KPI Card, Trend Line, tổng quan chiến lược)",
+      "Turn 1: Format output chuẩn: Tổng quan + 6 Chart + Lời kết",
+      "Turn 1: Kết thúc bằng câu mời phản hồi",
+      "Both: Không sinh code Python/R/SQL",
+      "Turn 2: Bot đưa ra giải pháp thực tế khi user hỏi thêm (KHÔNG cần output chart — chỉ cần tư vấn hướng giải quyết)"
     ],
     "actual_output": "",
     "status": "Untested",
-    "notes": "Test hard limit hệ thống. Data đủ cho 15 chart nhưng rule giới hạn 6."
+    "notes": "Turn 1 test hard limit + chart output. Turn 2 test tư vấn giải pháp — KHÔNG kỳ vọng chart output, chỉ cần bot đưa hướng (chia lượt, chia chủ đề, v.v.)."
   },
   {
     "id": "TC-D-004",
     "name": "Over Capacity — Chart phức tạp không phù hợp data đơn giản",
-    "group": "Over Capacity",
+    "group": "D",
+    "group_name": "Over Capacity",
     "priority": "Medium",
     "preconditions": "New conversation",
+    "domain": "Data analysis",
     "steps": [
-      "Turn 1: User yêu cầu Sankey + Treemap cho data chỉ có 2 cột số.",
-      "Turn 2: Bot giải thích không phù hợp, gợi ý thay thế.",
-      "Turn 3: User chấp nhận gợi ý thay thế."
+      "Turn 1: User yêu cầu Sankey + Treemap cho data chỉ có 2 cột số. Đã đủ 4 info.",
+      "→ Bot PHẢI giải thích tại sao Sankey/Treemap không phù hợp + gợi ý chart thay thế NGAY.",
+      "Turn 2: User đồng ý dùng chart thay thế.",
+      "→ Bot output chart theo format chuẩn."
     ],
-    "specific_input": "Turn 1: 'Tôi muốn Sankey Diagram và Treemap. Data có 2 cột: value_a (float — giá trị A), value_b (float — giá trị B). Người xem: Analyst. Tool: Tableau.' | Turn 3: 'Vậy thì dùng chart thay thế bạn gợi ý đi.'",
-    "expected_output": "Turn 2: Bot giải thích Sankey cần flow/path data, Treemap cần hierarchical data, 2 cột số không phù hợp. Gợi ý Scatter, Correlation chart. Turn 3→4: Bot gợi ý chart thay thế format chuẩn.",
+    "specific_input": "Turn 1: 'Tôi muốn 2 biểu đồ: Sankey Diagram và Treemap. Data có 2 cột: value_a (float — giá trị A, VD: doanh thu), value_b (float — giá trị B, VD: chi phí). Người xem: Analyst. Tool: Tableau.' | Turn 2: 'OK hiểu rồi, vậy dùng chart thay thế bạn gợi ý đi.'",
+    "expected_output": "Turn 1→Bot: Giải thích cụ thể: Sankey cần dữ liệu flow (nguồn→đích+giá trị), Treemap cần phân cấp (category+sub-category) — 2 cột số thuần không đáp ứng. Gợi ý thay thế phù hợp 2 cột số: Scatter Plot (tương quan), Line Chart (nếu có thứ tự), hoặc đề xuất feature engineering (ratio = value_a/value_b). Hỏi user muốn dùng chart thay thế không. Turn 2→Bot: Output chart thay thế theo format chuẩn đầy đủ.",
     "pass_fail_criteria": [
-      "Bot giải thích vì sao Sankey và Treemap không phù hợp",
-      "Bot gợi ý chart thay thế phù hợp cho 2 cột số",
-      "Kiến thức về chart type requirements chính xác",
-      "Sau khi user đồng ý, output đúng format",
-      "Không sinh code Python/R/SQL",
-      "Khi bot gợi ý chart thành công, phải kết thúc bằng câu hỏi mở cho chỉnh sửa (VD: 'Bạn có muốn chỉnh sửa gì không?')"
+      "Turn 1: Bot giải thích CỤ THỂ vì sao Sankey không phù hợp (cần flow/path data)",
+      "Turn 1: Bot giải thích CỤ THỂ vì sao Treemap không phù hợp (cần hierarchical data)",
+      "Turn 1: Bot gợi ý chart thay thế phù hợp 2 cột số (Scatter, Correlation, Histogram)",
+      "Turn 1: Không cố gợi ý Sankey/Treemap dù user yêu cầu",
+      "Turn 2: Output chart thay thế đúng format chuẩn (Tổng quan + Chart + Lời kết)",
+      "Turn 2: Mỗi chart đủ 4 thành phần",
+      "Không sinh code Python/R/SQL"
     ],
     "actual_output": "",
     "status": "Untested",
-    "notes": "Test kiến thức chart type requirements. Bot cần hiểu data structure cần thiết."
+    "notes": "Test kiến thức chart type requirements. Bot cần hiểu data structure cần thiết cho từng chart type và giải thích được — không chỉ nói 'không phù hợp' mà phải nói RÕ TẠI SAO."
   },
   {
     "id": "TC-D-005",
@@ -837,28 +850,30 @@
   {
     "id": "TC-G-003",
     "name": "Diverse Input — Tên cột lẫn lộn Anh-Việt",
-    "group": "Diverse Input Format",
+    "group": "G",
+    "group_name": "Diverse Input Format",
     "priority": "Medium",
     "preconditions": "New conversation",
+    "domain": "Nhân sự / HR",
     "steps": [
-      "Turn 1: User gửi danh sách cột tên lẫn lộn Anh-Việt, đầy đủ info.",
-      "Turn 2: Bot gợi ý chart, dùng đúng tên cột gốc.",
-      "Turn 3: User hỏi 'Bot có hiểu hết tên cột tiếng Việt không?'"
+      "Turn 1: User gửi đầy đủ 4 info nhưng tên cột lẫn lộn Anh-Việt.",
+      "→ Bot PHẢI gợi ý chart ngay, dùng đúng tên cột gốc.",
+      "Turn 2: User hỏi: 'Bot có hiểu hết tên cột tiếng Việt không? Xác nhận lại cho tôi.'",
+      "→ Bot xác nhận, liệt kê lại mapping (KHÔNG cần output chart mới)."
     ],
-    "specific_input": "Turn 1: 'Tôi muốn 3 chart phân tích nhân sự. Cột: ngay_tao (datetime — ngày tạo record), ten_nv (string — tên nhân viên), department (string — phòng ban), luong_co_ban (float — lương cơ bản), performance_score (float — điểm đánh giá), trang_thai (string — đang làm/đã nghỉ). Người xem: HR Manager. Tool: Tableau.' | Turn 3: 'Bạn hiểu hết tên cột tiếng Việt chứ? Xác nhận lại cho tôi.'",
-    "expected_output": "Turn 2: Bot gợi ý 3 chart format chuẩn, dùng đúng tên cột gốc. Turn 3→4: Bot xác nhận hiểu tất cả cột, liệt kê lại mapping.",
+    "specific_input": "Turn 1: 'Tôi muốn 3 chart phân tích nhân sự. Cột: ngay_tao (datetime — ngày tạo record), ten_nv (string — tên nhân viên), department (string — phòng ban), luong_co_ban (float — lương cơ bản), performance_score (float — điểm đánh giá), trang_thai (string — đang làm/đã nghỉ). Người xem: HR Manager. Tool: Tableau.' | Turn 2: 'Bạn hiểu hết tên cột tiếng Việt chứ? Xác nhận lại cho tôi.'",
+    "expected_output": "Turn 1→Bot: Gợi ý 3 chart format chuẩn, dùng đúng tên cột gốc. Turn 2→Bot: Xác nhận hiểu tất cả cột, liệt kê lại mapping.",
     "pass_fail_criteria": [
-      "Bot hiểu cả tên Việt lẫn Anh",
-      "Bot dùng đúng tên cột gốc trong công thức",
-      "Không yêu cầu đổi tên cột sang 1 ngôn ngữ",
-      "Chart phù hợp data HR",
-      "Format output chuẩn",
-      "Không sinh code Python/R/SQL",
-      "Khi bot gợi ý chart thành công, phải kết thúc bằng câu hỏi mở cho chỉnh sửa (VD: 'Bạn có muốn chỉnh sửa gì không?')"
+      "Turn 1: Bot gợi ý chart NGAY (đủ 4 info)",
+      "Turn 1: Có đúng 3 chart, format chuẩn",
+      "Turn 1: Bot dùng đúng tên cột GỐC trong công thức (ngay_tao, luong_co_ban, trang_thai — không tự đổi tên)",
+      "Turn 1: Chart phù hợp data HR và HR Manager",
+      "Both: Không sinh code Python/R/SQL",
+      "Turn 2: Bot xác nhận hiểu đúng, liệt kê lại mapping tên cột → ý nghĩa (KHÔNG cần output chart mới)"
     ],
     "actual_output": "",
     "status": "Untested",
-    "notes": "Rất phổ biến ở VN: codebase lẫn lộn Anh-Việt."
+    "notes": "Turn 1 test chart output với tên cột Việt. Turn 2 là câu hỏi XÁC NHẬN — KHÔNG kỳ vọng chart mới, chỉ cần bot liệt kê lại mapping."
   },
   {
     "id": "TC-G-004",
@@ -889,54 +904,61 @@
   {
     "id": "TC-G-005",
     "name": "Diverse Input — Mô tả data type bằng tiếng Việt không chuẩn",
-    "group": "Diverse Input Format",
+    "group": "G",
+    "group_name": "Diverse Input Format",
     "priority": "Medium",
     "preconditions": "New conversation",
+    "domain": "Bán hàng",
     "steps": [
-      "Turn 1: User mô tả kiểu dữ liệu bằng ngôn ngữ không chuẩn kỹ thuật.",
-      "Turn 2: Bot dịch sang chuẩn, xác nhận lại.",
-      "Turn 3: User xác nhận đúng."
+      "Turn 1: User gửi đầy đủ 4 info nhưng mô tả kiểu dữ liệu bằng tiếng Việt không chuẩn kỹ thuật.",
+      "→ Bot PHẢI dịch sang thuật ngữ chuẩn, liệt kê lại mapping, hỏi xác nhận.",
+      "Turn 2: User xác nhận mapping đúng, yêu cầu gợi ý chart.",
+      "→ Bot gợi ý chart theo format chuẩn."
     ],
-    "specific_input": "Turn 1: 'Tôi muốn 3 chart phân tích bán hàng. Cột: ngày bán (kiểu chữ ngày tháng), tên sản phẩm (kiểu chữ), giá bán (kiểu số lẻ), số lượng (kiểu số nguyên), đã thanh toán (kiểu đúng/sai), mã đơn hàng (kiểu chữ số). Người xem: Trưởng phòng. Tool: Excel.' | Turn 3: 'Đúng rồi, mapping như vậy chính xác. Gợi ý chart đi.'",
-    "expected_output": "Turn 2: Bot dịch type: 'kiểu chữ ngày tháng'→datetime, 'kiểu chữ'→string, 'kiểu số lẻ'→float, v.v. Xác nhận lại. Turn 3→4: Bot gợi ý 3 chart format chuẩn.",
+    "specific_input": "Turn 1: 'Tôi muốn 3 chart phân tích bán hàng. Cột: ngày bán (kiểu chữ ngày tháng), tên sản phẩm (kiểu chữ), giá bán (kiểu số lẻ), số lượng (kiểu số nguyên), đã thanh toán (kiểu đúng/sai), mã đơn hàng (kiểu chữ số). Người xem: Trưởng phòng. Tool: Excel.' | Turn 2: 'Đúng rồi, mapping như vậy chính xác. Gợi ý chart đi.'",
+    "expected_output": "Turn 1→Bot: Dịch đúng type: 'kiểu chữ ngày tháng'→datetime, 'kiểu chữ'→string, 'kiểu số lẻ'→float, 'kiểu số nguyên'→integer, 'kiểu đúng/sai'→boolean, 'kiểu chữ số'→string (identifier). Liệt kê lại mapping rõ ràng. Hỏi user xác nhận. Liệt kê thông tin đã nhận (mục tiêu, đối tượng, tool). Turn 2→Bot: Gợi ý 3 chart format chuẩn phù hợp Excel. Feature engineering: revenue = giá bán × số lượng, payment_rate = COUNT(đã thanh toán=True)/COUNT(*).",
     "pass_fail_criteria": [
-      "Bot dịch đúng tất cả kiểu dữ liệu",
-      "Bot xác nhận lại bằng thuật ngữ chuẩn",
-      "Không bị confused bởi 'kiểu chữ ngày tháng' vs 'kiểu chữ'",
-      "Gợi ý chart phù hợp Excel",
-      "Format output chuẩn sau khi xác nhận",
-      "Không sinh code Python/R/SQL",
-      "Khi bot gợi ý chart thành công, phải kết thúc bằng câu hỏi mở cho chỉnh sửa (VD: 'Bạn có muốn chỉnh sửa gì không?')"
-    ],
-    "actual_output": "",
-    "status": "Untested",
-    "notes": "Test bot hiểu ngôn ngữ không chuyên. Nhiều user không biết int, float, string."
-  },
-  {
-    "id": "TC-G-006",
-    "name": "Diverse Input — User gửi file đính kèm CSV thay vì mô tả text",
-    "group": "Diverse Input Format",
-    "priority": "High",
-    "preconditions": "New conversation",
-    "steps": [
-      "Turn 1: User gửi tin nhắn kèm file CSV và nói bot phân tích.",
-      "Turn 2: Bot phản hồi — xác nhận nhận file hoặc hướng dẫn cách cung cấp thông tin.",
-      "Turn 3: User bổ sung mục tiêu, số chart, đối tượng xem, tool."
-    ],
-    "specific_input": "Turn 1: 'Tôi đính kèm file sales_data.csv, bạn phân tích và gợi ý chart giùm. [Đính kèm file CSV gồm các cột: order_id, customer_name, order_date, product, category, quantity, revenue, region]' | Turn 3: 'Tôi muốn 3 chart phân tích doanh thu theo vùng. Người xem: Giám đốc vùng. Tool: Power BI.'",
-    "expected_output": "Turn 2: Bot xác nhận đã nhận thông tin cột từ file, liệt kê lại các cột nhận được để confirm, hỏi thêm mục tiêu/số chart/đối tượng/tool nếu thiếu. Turn 3→4: Bot gợi ý 3 chart theo format chuẩn 'Tổng tôi gợi ý 3 chart...' với Tên + Công thức + Dạng chart. Hỏi xác nhận.",
-    "pass_fail_criteria": [
-      "Bot nhận diện được cấu trúc cột từ file đính kèm",
-      "Bot liệt kê lại các cột để xác nhận với user",
-      "Bot hỏi bổ sung thông tin còn thiếu (mục tiêu, số chart, đối tượng, tool)",
-      "Có đúng 3 chart sau khi đủ thông tin",
-      "Mỗi chart có đủ Tên + Công thức + Dạng chart",
-      "Format output đúng chuẩn: 'Tổng tôi gợi ý X chart...'",
+      "Turn 1: Bot dịch đúng TẤT CẢ kiểu dữ liệu Việt→chuẩn",
+      "Turn 1: Bot liệt kê lại mapping rõ ràng để user xác nhận",
+      "Turn 1: Không bị confused giữa 'kiểu chữ ngày tháng' vs 'kiểu chữ' vs 'kiểu chữ số'",
+      "Turn 2: Gợi ý 3 chart phù hợp Excel, format chuẩn",
+      "Turn 2: Có feature engineering (revenue = giá bán × số lượng)",
+      "Mỗi chart đủ 4 thành phần",
       "Không sinh code Python/R/SQL"
     ],
     "actual_output": "",
     "status": "Untested",
-    "notes": "Test khả năng xử lý file đính kèm thay vì user mô tả text thủ công. Kiểm tra bot có parse được header CSV không."
+    "notes": "Test bot hiểu ngôn ngữ không chuyên. Turn 1: bot KHÔNG nên gợi ý chart ngay mà phải xác nhận mapping trước — vì kiểu dữ liệu do user mô tả mơ hồ, cần confirm. Turn 2 mới có chart."
+  },
+  {
+    "id": "TC-G-006",
+    "name": "Diverse Input — User mô tả file CSV thay vì liệt kê cột thủ công",
+    "group": "G",
+    "group_name": "Diverse Input Format",
+    "priority": "High",
+    "preconditions": "New conversation",
+    "domain": "Bán hàng",
+    "steps": [
+      "Turn 1: User mô tả rằng mình có file CSV và liệt kê header cột, nhưng thiếu đối tượng xem + tool + số chart cụ thể.",
+      "→ Bot PHẢI trích xuất danh sách cột, suy luận data type, hỏi thông tin còn thiếu.",
+      "Turn 2: User bổ sung mục tiêu cụ thể, số chart, đối tượng, tool.",
+      "→ Bot gợi ý chart theo format chuẩn."
+    ],
+    "specific_input": "Turn 1: 'Tôi có file sales_data.csv với các cột: order_id, customer_name, order_date, product, category, quantity, revenue, region. Bạn phân tích và gợi ý chart giùm.' | Turn 2: 'Tôi muốn 3 chart phân tích doanh thu theo vùng. Người xem: Giám đốc vùng. Tool: Power BI.'",
+    "expected_output": "Turn 1→Bot: Trích xuất 8 cột từ mô tả. Suy luận data type (order_id→int, order_date→datetime, revenue→float, v.v.). Liệt kê lại danh sách cột + data type suy luận để xác nhận. Liệt kê thông tin còn thiếu: mục tiêu cụ thể, số chart, đối tượng xem, tool. Hỏi tất cả trong 1 lượt. Turn 2→Bot: Đủ 4 info → gợi ý 3 chart format chuẩn. Chart phù hợp Giám đốc vùng + Power BI.",
+    "pass_fail_criteria": [
+      "Turn 1: Bot nhận diện được 8 cột từ mô tả CSV header",
+      "Turn 1: Bot suy luận data type hợp lý (order_date→datetime, revenue→float, v.v.)",
+      "Turn 1: Bot liệt kê lại các cột + data type để xác nhận",
+      "Turn 1: Bot hỏi TẤT CẢ thông tin còn thiếu trong 1 lượt (mục tiêu, số chart, đối tượng, tool)",
+      "Turn 1: KHÔNG gợi ý chart khi chưa đủ 4 info",
+      "Turn 2: Có đúng 3 chart, format chuẩn",
+      "Turn 2: Chart phù hợp Power BI",
+      "Không sinh code Python/R/SQL"
+    ],
+    "actual_output": "",
+    "status": "Untested",
+    "notes": "Test khả năng xử lý input dạng CSV header. Turn 1 thiếu 3/4 info (có cột nhưng thiếu mục tiêu cụ thể, đối tượng, tool) → bot PHẢI hỏi thêm, KHÔNG gợi ý chart ngay."
   },
   {
     "id": "TC-G-007",
@@ -966,29 +988,32 @@
   {
     "id": "TC-G-008",
     "name": "Diverse Input — User copy-paste nhiều dòng data thật vào chat",
-    "group": "Diverse Input Format",
+    "group": "G",
+    "group_name": "Diverse Input Format",
     "priority": "High",
     "preconditions": "New conversation",
+    "domain": "Bán hàng",
     "steps": [
-      "Turn 1: User paste nguyên block data nhiều dòng (dạng bảng) vào chat.",
-      "Turn 2: Bot phân tích, nhận diện cột, hỏi bổ sung.",
-      "Turn 3: User bổ sung mục tiêu + số chart + tool."
+      "Turn 1: User paste nguyên block data dạng bảng vào chat, nói 'gợi ý chart giùm' nhưng thiếu mục tiêu cụ thể, đối tượng, tool.",
+      "→ Bot PHẢI nhận diện cột từ header row, suy luận data type từ data rows, hỏi thông tin thiếu.",
+      "Turn 2: User bổ sung mục tiêu, số chart, đối tượng, tool.",
+      "→ Bot gợi ý chart theo format chuẩn. Có feature engineering (revenue = qty × price)."
     ],
-    "specific_input": "Turn 1: 'Đây là data của tôi, gợi ý chart giùm:\norder_id | date       | product      | qty | price  | region\n1001     | 2024-01-05 | Laptop       | 2   | 1500.0 | Bắc\n1002     | 2024-01-06 | Mouse        | 10  | 12.5   | Nam\n1003     | 2024-01-06 | Keyboard     | 5   | 45.0   | Trung\n1004     | 2024-01-07 | Monitor      | 1   | 320.0  | Bắc\n1005     | 2024-01-08 | Laptop       | 3   | 1500.0 | Nam\n1006     | 2024-01-09 | Headset      | 8   | 25.0   | Trung\n1007     | 2024-01-10 | Webcam       | 4   | 55.0   | Bắc' | Turn 3: 'Tôi muốn 3 chart phân tích doanh thu theo vùng và sản phẩm. Người xem: Trưởng phòng kinh doanh. Tool: Tableau.'",
-    "expected_output": "Turn 2: Bot nhận diện được 6 cột từ data paste (order_id, date, product, qty, price, region), xác nhận data type từng cột (int, datetime, string, int, float, string). Hỏi mục tiêu, số chart, đối tượng, tool. Turn 3→4: Bot gợi ý 3 chart theo format chuẩn 'Tổng tôi gợi ý 3 chart...' với Tên + Công thức + Dạng chart. Hỏi xác nhận.",
+    "specific_input": "Turn 1: 'Đây là data của tôi, gợi ý chart giùm:\norder_id | date       | product      | qty | price  | region\n1001     | 2024-01-05 | Laptop       | 2   | 1500.0 | Bắc\n1002     | 2024-01-06 | Mouse        | 10  | 12.5   | Nam\n1003     | 2024-01-06 | Keyboard     | 5   | 45.0   | Trung\n1004     | 2024-01-07 | Monitor      | 1   | 320.0  | Bắc\n1005     | 2024-01-08 | Laptop       | 3   | 1500.0 | Nam' | Turn 2: 'Tôi muốn 3 chart phân tích doanh thu theo vùng và sản phẩm. Người xem: Trưởng phòng kinh doanh. Tool: Tableau.'",
+    "expected_output": "Turn 1→Bot: Nhận diện 6 cột từ header (order_id, date, product, qty, price, region). Suy luận data type từ data: order_id→int, date→datetime, product→string, qty→int, price→float, region→string. Liệt kê lại cột + type. Hỏi thông tin thiếu: mục tiêu, số chart, đối tượng, tool. Turn 2→Bot: Gợi ý 3 chart format chuẩn. Feature engineering: revenue = qty × price. Chart phù hợp Trưởng phòng + Tableau.",
     "pass_fail_criteria": [
-      "Bot nhận diện đúng 6 cột từ data paste dạng bảng",
-      "Bot suy luận đúng data type từng cột (không cần user khai báo)",
-      "Bot hỏi bổ sung thông tin còn thiếu trước khi gợi ý",
-      "Có đúng 3 chart sau khi đủ thông tin",
-      "Mỗi chart có đủ Tên + Công thức + Dạng chart",
-      "Feature Engineering hợp lý (VD: revenue = qty * price)",
-      "Format output đúng chuẩn: 'Tổng tôi gợi ý X chart...'",
+      "Turn 1: Bot nhận diện đúng 6 cột từ data paste dạng bảng",
+      "Turn 1: Bot suy luận data type hợp lý (date→datetime, qty→int, price→float)",
+      "Turn 1: Bot liệt kê lại cột + data type để xác nhận",
+      "Turn 1: Bot hỏi bổ sung thông tin còn thiếu (mục tiêu, số chart, đối tượng, tool)",
+      "Turn 1: KHÔNG gợi ý chart khi chưa đủ 4 info",
+      "Turn 2: Có đúng 3 chart, format chuẩn",
+      "Turn 2: Có feature engineering (revenue = qty × price)",
       "Không sinh code Python/R/SQL"
     ],
     "actual_output": "",
     "status": "Untested",
-    "notes": "Test xử lý raw data paste — bot phải tự parse bảng, nhận diện header vs data rows, suy luận data type. Quan trọng: bot nhận ra price*qty = revenue dù user không khai báo."
+    "notes": "Test xử lý raw data paste. Bot phải tự parse bảng, nhận diện header vs data rows, suy luận data type. Quan trọng: bot phải nhận ra qty × price = revenue dù user không khai báo cột revenue. Turn 1 thiếu 3/4 info → phải hỏi thêm."
   },
   {
     "id": "TC-H-001",
@@ -1176,28 +1201,32 @@
   {
     "id": "TC-I-003",
     "name": "Edge Case — Toàn cột số, không categorical",
-    "group": "Edge Cases",
+    "group": "I",
+    "group_name": "Edge Cases",
     "priority": "Medium",
     "preconditions": "New conversation",
+    "domain": "Tài chính",
     "steps": [
-      "Turn 1: User gửi 5 cột toàn float, yêu cầu 3 chart.",
-      "Turn 2: Bot gợi ý chart cho pure numeric data.",
-      "Turn 3: User hỏi 'Có cần thêm cột categorical không?'"
+      "Turn 1: User gửi đầy đủ 4 info: 5 cột toàn float, 3 chart, CFO, Tableau.",
+      "→ Bot PHẢI gợi ý 3 chart ngay cho pure numeric data. Có feature engineering.",
+      "Turn 2: User hỏi follow-up: có cần thêm cột categorical không?",
+      "→ Bot tư vấn về cột bổ sung (KHÔNG cần output chart mới)."
     ],
-    "specific_input": "Turn 1: 'Tôi muốn 3 chart. Data gồm 5 cột: revenue (float — doanh thu), cost (float — chi phí), profit (float — lợi nhuận), tax (float — thuế), discount (float — giảm giá). Tất cả đều là số. Người xem: CFO. Tool: Tableau.' | Turn 3: 'Có cần thêm cột categorical nào không để chart phong phú hơn?'",
-    "expected_output": "Turn 2: Bot gợi ý Waterfall, Correlation Matrix, Scatter. Feature engineering (profit margin). Format chuẩn. Turn 3→4: Bot gợi ý thêm cột categorical (VD: department, product_line) để mở rộng analysis.",
+    "specific_input": "Turn 1: 'Tôi muốn 3 chart. Data gồm 5 cột: revenue (float — doanh thu), cost (float — chi phí), profit (float — lợi nhuận), tax (float — thuế), discount (float — giảm giá). Tất cả đều là số. Người xem: CFO. Tool: Tableau.' | Turn 2: 'Có cần thêm cột categorical nào không để chart phong phú hơn?'",
+    "expected_output": "Turn 1→Bot: Gợi ý 3 chart phù hợp pure numeric + CFO. Feature engineering: profit_margin, net_after_tax. Turn 2→Bot: Gợi ý cụ thể cột categorical có thể bổ sung.",
     "pass_fail_criteria": [
-      "Bot nhận ra không có categorical dimension",
-      "Chart phù hợp pure numeric (Scatter, Correlation, Waterfall)",
-      "Có feature engineering (VD: profit margin)",
-      "Chart phù hợp CFO",
-      "Bot gợi ý bổ sung cột khi được hỏi",
-      "Không sinh code Python/R/SQL",
-      "Khi bot gợi ý chart thành công, phải kết thúc bằng câu hỏi mở cho chỉnh sửa (VD: 'Bạn có muốn chỉnh sửa gì không?')"
+      "Turn 1: Bot gợi ý chart NGAY (đủ 4 info)",
+      "Turn 1: Có đúng 3 chart",
+      "Turn 1: Chart phù hợp pure numeric (Scatter, Waterfall, KPI Card — KHÔNG dùng Pie, Bar nhóm vì không có categorical)",
+      "Turn 1: Có feature engineering (profit_margin, net_after_tax, hoặc ratio khác)",
+      "Turn 1: Chart phù hợp CFO và khả thi trong Tableau",
+      "Turn 1: Format chuẩn: Tổng quan + 3 Chart + Lời kết",
+      "Both: Không sinh code Python/R/SQL",
+      "Turn 2: Bot gợi ý cụ thể loại cột categorical có thể bổ sung (KHÔNG cần output chart mới — chỉ cần tư vấn)"
     ],
     "actual_output": "",
     "status": "Untested",
-    "notes": "Ngược I-002: toàn số. Test bot cân bằng + tư vấn mở rộng."
+    "notes": "Turn 1 test chart output cho pure numeric. Turn 2 là câu hỏi TƯ VẤN MỞ RỘNG — KHÔNG kỳ vọng chart mới, chỉ cần bot gợi ý cột bổ sung."
   },
   {
     "id": "TC-I-004",
@@ -1227,27 +1256,32 @@
   {
     "id": "TC-I-005",
     "name": "Edge Case — Data boolean-heavy (4/6 cột boolean)",
-    "group": "Edge Cases",
+    "group": "I",
+    "group_name": "Edge Cases",
     "priority": "Low",
     "preconditions": "New conversation",
+    "domain": "Product / SaaS",
     "steps": [
-      "Turn 1: User gửi data 4/6 cột boolean.",
-      "Turn 2: Bot gợi ý chart phù hợp boolean data.",
-      "Turn 3: User hỏi 'Có thể tạo funnel từ các cột boolean không?'"
+      "Turn 1: User gửi đầy đủ 4 info: 6 cột (4 boolean), 3 chart, Product Manager, Google Data Studio.",
+      "→ Bot PHẢI nhận ra đa số cột boolean, gợi ý chart phù hợp. Có feature engineering boolean.",
+      "Turn 2: User hỏi follow-up: có thể tạo funnel từ 3 cột boolean không?",
+      "→ Bot giải thích funnel logic (KHÔNG cần output chart set mới)."
     ],
-    "specific_input": "Turn 1: 'Tôi muốn 3 chart. Cột: user_id (int — mã user), created_date (datetime — ngày tạo), is_active (boolean — đang hoạt động), is_paid (boolean — đã thanh toán), is_verified (boolean — đã xác minh), has_discount (boolean — có giảm giá). Người xem: Product Manager. Tool: Google Data Studio.' | Turn 3: 'Có thể tạo funnel từ 3 cột boolean (is_active → is_verified → is_paid) không? Nếu có thì chart sẽ như nào?'",
-    "expected_output": "Turn 2: Bot gợi ý Stacked Bar (tỷ lệ boolean), Funnel, Timeline. Format chuẩn. Turn 3→4: Bot giải thích Funnel chart từ boolean columns, mô tả cách tính conversion rate giữa các stage.",
+    "specific_input": "Turn 1: 'Tôi muốn 3 chart. Cột: user_id (int — mã user), created_date (datetime — ngày tạo), is_active (boolean — đang hoạt động), is_paid (boolean — đã thanh toán), is_verified (boolean — đã xác minh), has_discount (boolean — có giảm giá). Người xem: Product Manager. Tool: Google Data Studio.' | Turn 2: 'Có thể tạo funnel từ 3 cột boolean (is_active → is_verified → is_paid) không? Nếu có thì chart sẽ như nào?'",
+    "expected_output": "Turn 1→Bot: Nhận ra 4/6 cột boolean, gợi ý 3 chart phù hợp. Feature engineering: conversion_rate, activation_rate. Turn 2→Bot: Giải thích cách tạo funnel từ boolean columns.",
     "pass_fail_criteria": [
-      "Bot nhận ra đa số cột là boolean",
-      "Chart sử dụng boolean hợp lý (tỷ lệ, funnel, segmentation)",
-      "Có feature engineering (VD: user_segment từ combo boolean)",
-      "Bot giải thích funnel logic khi được hỏi",
-      "Không sinh code Python/R/SQL",
-      "Khi bot gợi ý chart thành công, phải kết thúc bằng câu hỏi mở cho chỉnh sửa (VD: 'Bạn có muốn chỉnh sửa gì không?')"
+      "Turn 1: Bot gợi ý chart NGAY (đủ 4 info)",
+      "Turn 1: Bot nhận ra đa số cột là boolean (đề cập trong response)",
+      "Turn 1: Có đúng 3 chart, format chuẩn",
+      "Turn 1: Chart sử dụng boolean hợp lý (tỷ lệ, conversion, segmentation — KHÔNG dùng Scatter/Line trên boolean)",
+      "Turn 1: Có feature engineering từ boolean (conversion_rate, activation_rate, hoặc combo segment)",
+      "Turn 1: Chart khả thi trong Google Data Studio",
+      "Both: Không sinh code Python/R/SQL",
+      "Turn 2: Bot giải thích cách tạo funnel logic từ boolean columns (KHÔNG cần output chart set mới — chỉ cần giải thích funnel logic)"
     ],
     "actual_output": "",
     "status": "Untested",
-    "notes": "Test xử lý boolean-heavy data + tư vấn funnel analysis."
+    "notes": "Turn 1 test chart output cho boolean-heavy data. Turn 2 là câu hỏi về FUNNEL LOGIC — KHÔNG kỳ vọng chart set mới, chỉ cần bot giải thích cách tạo funnel."
   },
   {
     "id": "TC-I-006",
@@ -1407,50 +1441,30 @@
   {
     "id": "TC-K-001",
     "name": "Graceful Exit — Bye giữa chừng thu thập thông tin",
-    "group": "Graceful Exit",
+    "group": "K",
+    "group_name": "Graceful Exit",
     "priority": "High",
-    "preconditions": "Đang trong luồng thu thập thông tin",
+    "preconditions": "New conversation",
+    "domain": "N/A",
     "steps": [
-      "Turn 1: User gửi mục tiêu.",
-      "Turn 2: Bot hỏi thêm cột dữ liệu.",
-      "Turn 3: User nói bye, muốn dừng."
+      "Turn 1: User gửi mục tiêu nhưng thiếu cột, đối tượng, tool.",
+      "→ Bot hỏi thông tin còn thiếu.",
+      "Turn 2: User nói bye, muốn dừng.",
+      "→ Bot tạm biệt lịch sự, KHÔNG hỏi thêm, KHÔNG cố giữ user."
     ],
-    "specific_input": "Turn 1: 'Tôi muốn phân tích doanh thu.' | Turn 3: 'Thôi tôi không cần nữa, bye. Cảm ơn.'",
-    "expected_output": "Turn 2: Bot hỏi thông tin cột. Turn 3→4: Bot tạm biệt lịch sự, có thể tóm tắt ngắn, nhắc user quay lại bất cứ lúc nào. KHÔNG cố giữ user.",
+    "specific_input": "Turn 1: 'Tôi muốn phân tích doanh thu.' | Turn 2: 'Thôi tôi không cần nữa, bye. Cảm ơn.'",
+    "expected_output": "Turn 1→Bot: Nhận mục tiêu (phân tích doanh thu). Hỏi thông tin còn thiếu: danh sách cột, đối tượng xem, tool. Liệt kê rõ đã nhận được gì và còn thiếu gì. Turn 2→Bot: Tạm biệt lịch sự. Có thể tóm tắt ngắn ('Chúng ta đã bắt đầu thảo luận về phân tích doanh thu'). Nhắc user quay lại bất cứ lúc nào. KHÔNG hỏi 'muốn điều chỉnh gì không?'. KHÔNG cố thuyết phục ở lại.",
     "pass_fail_criteria": [
-      "Bot dừng lại ngay, không hỏi thêm",
-      "Bot chào tạm biệt lịch sự",
-      "Có thể tóm tắt ngắn tiến độ",
-      "Nhắc user có thể quay lại",
-      "KHÔNG cố thuyết phục user ở lại",
+      "Turn 1: Bot nhận đúng mục tiêu, hỏi thông tin thiếu (cột, đối tượng, tool)",
+      "Turn 2: Bot dừng lại NGAY, không hỏi thêm câu nào",
+      "Turn 2: Bot chào tạm biệt lịch sự",
+      "Turn 2: KHÔNG chứa câu hỏi mời chỉnh sửa/điều chỉnh (ngoại lệ graceful exit)",
+      "Turn 2: KHÔNG cố thuyết phục user ở lại hoặc tiếp tục",
       "Không sinh code Python/R/SQL"
     ],
     "actual_output": "",
     "status": "Untested",
-    "notes": "Test graceful exit giữa luồng. Bot phải tôn trọng quyết định rời đi."
-  },
-  {
-    "id": "TC-K-002",
-    "name": "Graceful Exit — 'Thôi khỏi' sau khi nhận chart",
-    "group": "Graceful Exit",
-    "priority": "High",
-    "preconditions": "Bot đã gợi ý chart, đang hỏi chỉnh sửa",
-    "steps": [
-      "Turn 1: Bot đã gợi ý 4 chart, hỏi 'Bạn có muốn chỉnh sửa?'",
-      "Turn 2: User nói thôi khỏi."
-    ],
-    "specific_input": "Turn 2: 'Thôi khỏi, tôi sẽ tự xử lý. Không cần chỉnh gì.'",
-    "expected_output": "Turn 2→3: Bot chấp nhận, chúc thành công, nhắc quay lại nếu cần. KHÔNG hỏi lý do, KHÔNG gợi ý thêm.",
-    "pass_fail_criteria": [
-      "Bot chấp nhận ngay, không kéo dài",
-      "Giọng điệu tích cực, không tiêu cực",
-      "Không hỏi 'Tại sao bạn muốn dừng?'",
-      "Không gợi ý thêm chart hoặc tính năng",
-      "Không sinh code Python/R/SQL"
-    ],
-    "actual_output": "",
-    "status": "Untested",
-    "notes": "Test exit SAU khi nhận output. Bot đã hoàn thành task chính."
+    "notes": "Test graceful exit giữa luồng thu thập info. Bot phải tôn trọng quyết định rời đi. Lưu ý: system prompt có rule 'luôn kết thúc bằng câu mời phản hồi' nhưng exit là NGOẠI LỆ — bot không nên hỏi thêm khi user đã nói dừng."
   },
   {
     "id": "TC-K-003",
